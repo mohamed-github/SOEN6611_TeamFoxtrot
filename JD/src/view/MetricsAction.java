@@ -3,6 +3,7 @@ package view;
 import java.lang.reflect.InvocationTargetException;
 
 import metrics.LCOM;
+import metrics.RFC;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -96,6 +97,7 @@ public class MetricsAction  implements IObjectActionDelegate {
 					selectedCompilationUnit = null;
 					selectedType = null;
 				}
+				System.out.println("The selected Project is : " + selectedProject);
 				IWorkbench wb = PlatformUI.getWorkbench();
 				IProgressService ps = wb.getProgressService();
 				ps.busyCursorWhile(new IRunnableWithProgress() {
@@ -109,6 +111,10 @@ public class MetricsAction  implements IObjectActionDelegate {
 						SystemObject system = ASTReader.getSystemObject();
 						LCOM lcom = new LCOM(system);
 						System.out.print(lcom.toString());
+						
+						System.out.print("\n RFC Metric Calculation Starts ........... \n");
+						RFC rfc = new RFC(system);
+						System.out.print("\n RFC Metric Calculation Ends ........... \n");
 						
 						if(selectedPackageFragmentRoot != null) {
 							// package fragment root selected
