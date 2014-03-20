@@ -2,6 +2,7 @@ package view;
 
 import java.lang.reflect.InvocationTargetException;
 
+import metrics.DIT;
 import metrics.LCOM;
 import metrics.RFC;
 
@@ -97,7 +98,6 @@ public class MetricsAction  implements IObjectActionDelegate {
 					selectedCompilationUnit = null;
 					selectedType = null;
 				}
-				System.out.println("The selected Project is : " + selectedProject);
 				IWorkbench wb = PlatformUI.getWorkbench();
 				IProgressService ps = wb.getProgressService();
 				ps.busyCursorWhile(new IRunnableWithProgress() {
@@ -110,11 +110,13 @@ public class MetricsAction  implements IObjectActionDelegate {
 						}
 						SystemObject system = ASTReader.getSystemObject();
 						LCOM lcom = new LCOM(system);
-						System.out.print(lcom.toString());
 						
+						System.out.println(lcom.toString());
 						System.out.print("\n RFC Metric Calculation Starts ........... \n");
 						RFC rfc = new RFC(system);
 						System.out.print("\n RFC Metric Calculation Ends ........... \n");
+						DIT dit = new DIT(system);
+						
 						
 						if(selectedPackageFragmentRoot != null) {
 							// package fragment root selected
