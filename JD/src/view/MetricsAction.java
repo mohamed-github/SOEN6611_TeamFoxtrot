@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import metrics.DIT;
 import metrics.LCOM;
+import metrics.NOC;
 import metrics.RFC;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -109,14 +110,26 @@ public class MetricsAction  implements IObjectActionDelegate {
 							new ASTReader(selectedProject, monitor);
 						}
 						SystemObject system = ASTReader.getSystemObject();
+						/**
+						 * Metric Calculation
+						 */
+						//LCOM Computation
 						LCOM lcom = new LCOM(system);
-						
 						System.out.println(lcom.toString());
+						
+						// RFC Computation
 						System.out.print("\n RFC Metric Calculation Starts ........... \n");
 						RFC rfc = new RFC(system);
+						System.out.println(rfc.toString());
 						System.out.print("\n RFC Metric Calculation Ends ........... \n");
-						DIT dit = new DIT(system);
 						
+						// DIT Computation
+						DIT dit = new DIT(system);
+						System.out.println(dit.toString());
+						
+						//NOC Computation
+						NOC noc = new NOC(system);
+						System.out.println(noc.toString());
 						
 						if(selectedPackageFragmentRoot != null) {
 							// package fragment root selected
