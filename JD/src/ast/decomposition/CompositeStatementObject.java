@@ -169,6 +169,32 @@ public class CompositeStatementObject extends AbstractStatement {
 		}
 		return ifStatements;
 	}
+	
+	public List<CompositeStatementObject> getForStatements() {
+		List<CompositeStatementObject> forStatements = new ArrayList<CompositeStatementObject>();
+		if(this.getType().equals(StatementType.FOR))
+			forStatements.add(this);
+		for(AbstractStatement statement : statementList) {
+			if(statement instanceof CompositeStatementObject) {
+				CompositeStatementObject composite = (CompositeStatementObject)statement;
+				forStatements.addAll(composite.getForStatements());
+			}
+		}
+		return forStatements;
+	}
+	
+	public List<CompositeStatementObject> getWhileStatements() {
+		List<CompositeStatementObject> whileStatements = new ArrayList<CompositeStatementObject>();
+		if(this.getType().equals(StatementType.WHILE))
+			whileStatements.add(this);
+		for(AbstractStatement statement : statementList) {
+			if(statement instanceof CompositeStatementObject) {
+				CompositeStatementObject composite = (CompositeStatementObject)statement;
+				whileStatements.addAll(composite.getWhileStatements());
+			}
+		}
+		return whileStatements;
+	}
 
 	public List<CompositeStatementObject> getSwitchStatements() {
 		List<CompositeStatementObject> switchStatements = new ArrayList<CompositeStatementObject>();

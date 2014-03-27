@@ -6,6 +6,7 @@ import metrics.DIT;
 import metrics.LCOM;
 import metrics.NOC;
 import metrics.RFC;
+import metrics.WMC;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -130,6 +131,10 @@ public class MetricsAction  implements IObjectActionDelegate {
 						//NOC Computation
 						NOC noc = new NOC(system);
 						System.out.println(noc.toString());
+						
+						//WMC Computation
+						WMC wmc = new WMC(system);
+						System.out.println(wmc.toString());
 						
 						if(selectedPackageFragmentRoot != null) {
 							// package fragment root selected
