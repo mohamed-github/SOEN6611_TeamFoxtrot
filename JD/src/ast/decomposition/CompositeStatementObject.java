@@ -183,6 +183,19 @@ public class CompositeStatementObject extends AbstractStatement {
 		return forStatements;
 	}
 	
+	public List<CompositeStatementObject> getDoStatements() {
+		List<CompositeStatementObject> doStatements = new ArrayList<CompositeStatementObject>();
+		if(this.getType().equals(StatementType.DO))
+			doStatements.add(this);
+		for(AbstractStatement statement : statementList) {
+			if(statement instanceof CompositeStatementObject) {
+				CompositeStatementObject composite = (CompositeStatementObject)statement;
+				doStatements.addAll(composite.getDoStatements());
+			}
+		}
+		return doStatements;
+	}
+	
 	public List<CompositeStatementObject> getWhileStatements() {
 		List<CompositeStatementObject> whileStatements = new ArrayList<CompositeStatementObject>();
 		if(this.getType().equals(StatementType.WHILE))
@@ -209,6 +222,31 @@ public class CompositeStatementObject extends AbstractStatement {
 		return switchStatements;
 	}
 
+	public List<CompositeStatementObject> getSwitchCaseStatements() {
+		List<CompositeStatementObject> switchCaseStatements = new ArrayList<CompositeStatementObject>();
+		if(this.getType().equals(StatementType.CASE))
+			switchCaseStatements.add(this);
+		for(AbstractStatement statement : statementList) {
+			if(statement instanceof CompositeStatementObject) {
+				CompositeStatementObject composite = (CompositeStatementObject)statement;
+				switchCaseStatements.addAll(composite.getSwitchCaseStatements());
+			}
+		}
+		return switchCaseStatements;
+	}
+	
+	public List<CompositeStatementObject> getDefaultStatements() {
+		List<CompositeStatementObject> defaultStatements = new ArrayList<CompositeStatementObject>();
+		if(this.getType().equals(StatementType.DEFAULT))
+			defaultStatements.add(this);
+		for(AbstractStatement statement : statementList) {
+			if(statement instanceof CompositeStatementObject) {
+				CompositeStatementObject composite = (CompositeStatementObject)statement;
+				defaultStatements.addAll(composite.getSwitchCaseStatements());
+			}
+		}
+		return defaultStatements;
+	}
 	public List<TryStatementObject> getTryStatements() {
 		List<TryStatementObject> tryStatements = new ArrayList<TryStatementObject>();
 		if(this.getType().equals(StatementType.TRY))

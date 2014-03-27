@@ -61,7 +61,17 @@ public class WMC {
 		
 		totalControlStatementList.addAll(whileStmtList);
 		
-		// Add code for Switch case, 
+		List<CompositeStatementObject> doStmtList = compStmtObj.getDoStatements();
+		
+		totalControlStatementList.addAll(doStmtList);
+		
+		List<CompositeStatementObject> caseStmtList = compStmtObj.getSwitchCaseStatements();
+		
+		totalControlStatementList.addAll(caseStmtList);
+		
+		List<CompositeStatementObject> defaultStmtList = compStmtObj.getDefaultStatements();
+		
+		totalControlStatementList.addAll(defaultStmtList);
 		
 		D = totalControlStatementList.size();
 		
