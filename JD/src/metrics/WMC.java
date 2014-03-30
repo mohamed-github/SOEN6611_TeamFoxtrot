@@ -16,7 +16,7 @@ public class WMC {
         int wmcValue;
 		for(ClassObject classObject : classes) {
 			wmcValue = computeWMC(classObject);
-			System.out.println("\n WMC for Class " + classObject.getName() + " is " + wmcValue);
+			System.out.println("WMC for Class " + classObject.getName() + " is " + wmcValue);
 		}	
 	}
 	
@@ -32,7 +32,7 @@ public class WMC {
 			
 			 int ccValueForEachMethod = computeCyclomaticComplexity(methodObj);
 			 
-			 System.out.println("The cyclomatic complexity of method " + methodObj.getName() + " in the class " + classObject.getName() + " is : " + ccValueForEachMethod);
+			 //System.out.println("The cyclomatic complexity of method " + methodObj.getName() + " in the class " + classObject.getName() + " is : " + ccValueForEachMethod);
 			 
 			 sumOfCCValueOfAllMethod = sumOfCCValueOfAllMethod + ccValueForEachMethod;
 		}

@@ -23,7 +23,7 @@ public class RFC {
         int rfcValue;
 		for(ClassObject classObject : classes) {
 			rfcValue = computeRFC(classObject);
-			System.out.println("\n RFC for Class " + classObject.getName() + " is " + rfcValue);
+			System.out.println("RFC for Class " + classObject.getName() + " is " + rfcValue);
 		}
 		
 	}
@@ -35,7 +35,7 @@ public class RFC {
 		RS = new TreeSet<String>();
 		RFC = 0;
 		
-		System.out.println("\n The name of the class is : " + classObject.getName());
+		//System.out.println("\n The name of the class is : " + classObject.getName());
 		//System.out.println("The number of methods in this class: " + classObject.getNumberOfMethods());
 		
 		List<MethodObject> methods = classObject.getMethodList();
@@ -71,7 +71,7 @@ public class RFC {
 			sb.append(",");
 		}
 		sb.append("}");
-		System.out.println("\n The Elements of M set are :" + sb);
+		//System.out.println("\n The Elements of M set are :" + sb);
 		
 		Iterator<String> iR = R.iterator();
 		StringBuffer sb2 = new StringBuffer();
@@ -84,7 +84,7 @@ public class RFC {
 			sb2.append(",");
 		}
 		sb2.append("}");
-		System.out.println("\n The Elements of R set are :" + sb2);
+		//System.out.println("\n The Elements of R set are :" + sb2);
 		
 		//calculate RS = M U R
 		RS = unionOfSet(M, R);
@@ -100,7 +100,7 @@ public class RFC {
 			
 		}
 		sb3.append("}");
-		System.out.println("\n The Elements of RS set are :" + sb3);
+		//System.out.println("\n The Elements of RS set are :" + sb3);
 		
 		
 		//return |RS| - its size : This is the RFC value

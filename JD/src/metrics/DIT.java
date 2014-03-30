@@ -89,8 +89,10 @@ public class DIT
 		}
 			else
 		{
-			
-			System.out.println("There is no superclass for  " + classObject.getName());
+			/**
+			* For Debugging
+				System.out.println("There is no superclass for  " + classObject.getName());
+			*/
 		}
 		
 		// Return Value to DIT constructor
