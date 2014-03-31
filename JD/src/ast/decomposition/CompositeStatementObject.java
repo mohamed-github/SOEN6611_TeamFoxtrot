@@ -235,6 +235,19 @@ public class CompositeStatementObject extends AbstractStatement {
 		return switchCaseStatements;
 	}
 	
+	public List<CompositeStatementObject> getSwitchCase2Statements() {
+		List<CompositeStatementObject> switchCaseStatements = new ArrayList<CompositeStatementObject>();
+		if(this.getType().equals(StatementType.SWITCH_CASE))
+			switchCaseStatements.add(this);
+		for(AbstractStatement statement : statementList) {
+			if(statement instanceof CompositeStatementObject) {
+				CompositeStatementObject composite = (CompositeStatementObject)statement;
+				switchCaseStatements.addAll(composite.getSwitchCase2Statements());
+			}
+		}
+		return switchCaseStatements;
+	}
+	
 	public List<CompositeStatementObject> getDefaultStatements() {
 		List<CompositeStatementObject> defaultStatements = new ArrayList<CompositeStatementObject>();
 		if(this.getType().equals(StatementType.DEFAULT))
@@ -242,7 +255,7 @@ public class CompositeStatementObject extends AbstractStatement {
 		for(AbstractStatement statement : statementList) {
 			if(statement instanceof CompositeStatementObject) {
 				CompositeStatementObject composite = (CompositeStatementObject)statement;
-				defaultStatements.addAll(composite.getSwitchCaseStatements());
+				defaultStatements.addAll(composite.getDefaultStatements());
 			}
 		}
 		return defaultStatements;
