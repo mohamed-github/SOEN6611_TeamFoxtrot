@@ -26,6 +26,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
+import util.WriteOutputToFile;
+
 import ast.ASTReader;
 import ast.CompilationUnitCache;
 import ast.SystemObject;
@@ -118,34 +120,45 @@ public class MetricsAction  implements IObjectActionDelegate {
 						 */
 						
 						//LCOM Computation
-						System.out.print("\n LCOM Metrics ...........\n");
 						LCOM lcom = new LCOM(system);
-						System.out.println(lcom.toString());
 						
 						// RFC Computation
-						System.out.print("\n RFC Metrics ............\n");
 						RFC rfc = new RFC(system);
-						System.out.println(rfc.toString());
 						
 						// DIT Computation
-						System.out.print("\n DIT Metrics ............\n");
 						DIT dit = new DIT(system);
-						System.out.println(dit.toString());
 						
 						//NOC Computation
-						System.out.print("\n NOC Metrics ............ \n");
 						NOC noc = new NOC(system);
-						System.out.println(noc.toString());
 						
 						//WMC Computation
-						System.out.print("\n WMC Metrics ............\n");
 						WMC wmc = new WMC(system);
-						System.out.println(wmc.toString());
 						
 						//CBO Computation
-						System.out.print("\n CBO Metrics ............\n");
 						CBO cbo = new CBO(system);
-						System.out.println(cbo.toString());
+						
+						String outputDataToConsole = "\n\n Calculation of CK Metrics \n" + "\n LCOM Metrics ...........\n" + lcom.toString() + 
+											"\n RFC Metrics ............\n" + rfc.toString() + 
+											"\n DIT Metrics ............\n" + dit.toString() +
+											"\n NOC Metrics ............ \n" + noc.toString() +
+											"\n WMC Metrics ............\n" + wmc.toString() +
+											"\n CBO Metrics ............\n" + cbo.toString();
+						
+						// Write to Console
+						System.out.println(outputDataToConsole);
+						
+						String outputDataToFile = "Calculation of CK Metrics " + System.getProperty("line.separator") + System.getProperty("line.separator") +
+								"LCOM Metrics ..........." + System.getProperty("line.separator") + lcom.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator") +
+								"RFC Metrics ............" + System.getProperty("line.separator") + rfc.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator") +
+								"DIT Metrics ............" + System.getProperty("line.separator") + dit.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator") +
+								"NOC Metrics ............" + System.getProperty("line.separator") + noc.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator") +
+								"WMC Metrics ............" + System.getProperty("line.separator") + wmc.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator") +
+								"CBO Metrics ............" + System.getProperty("line.separator") + cbo.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator");
+						
+						//Write to a file named "MetricsOutput.txt" on Desktop
+						WriteOutputToFile wof = new WriteOutputToFile();
+						wof.writeOutput(outputDataToFile);
+						
 						
 						if(selectedPackageFragmentRoot != null) {
 							// package fragment root selected
