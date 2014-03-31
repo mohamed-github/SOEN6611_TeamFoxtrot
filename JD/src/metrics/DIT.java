@@ -9,6 +9,8 @@
  */
 package metrics;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import ast.ClassObject;
@@ -17,12 +19,15 @@ import ast.TypeObject;
 
 public class DIT 
 {
+	private Map<String, Integer> ditMap;
+	
 	/**
 	 * Constructor
 	 * @param system The system object
 	 */
 	public DIT(SystemObject system) 
 	{
+		ditMap = new HashMap<String, Integer>();
 		//Pass ClassObjects to a set
         Set<ClassObject> classes = system.getClassObjects();
         
@@ -31,7 +36,8 @@ public class DIT
 		{
 			//DIT value calculation from computeDIT
 			int ditValue = computeDIT(system, classObject);
-			System.out.println("The DIT Value of the " + classObject.getName()  + " is : " + ditValue);
+			//System.out.println("The DIT Value of the " + classObject.getName()  + " is : " + ditValue);
+			ditMap.put(classObject.getName(), ditValue);
 		}
 		
 	}
@@ -99,5 +105,13 @@ public class DIT
 		return ditCount;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(String key : ditMap.keySet()) {
+			sb.append(key).append("\t").append(ditMap.get(key)).append("\n");
+		}
+		return sb.toString();
+	}
 
 }

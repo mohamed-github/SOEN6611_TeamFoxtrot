@@ -1,7 +1,9 @@
 package metrics;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import ast.ClassObject;
@@ -15,13 +17,17 @@ import ast.SystemObject;
 import ast.TypeObject;
 
 public class CBO {
-
+	
+	private Map<String, Integer> cboMap;
+	
 	public CBO(SystemObject system) {
+		cboMap = new HashMap<String, Integer>();
         Set<ClassObject> classes = system.getClassObjects();
         int cboValue;
 		for(ClassObject classObject : classes) {
 			cboValue = computeCBO(classObject, system);
-			System.out.println("CBO for Class " + classObject.getName() + " is " + cboValue);
+			//System.out.println("CBO for Class " + classObject.getName() + " is " + cboValue);
+			cboMap.put(classObject.getName(), cboValue);
 		}
 	}
 
@@ -106,5 +112,14 @@ public class CBO {
 		
 		//Size of the Coupled Classes Set is the CBO Value
 		return coupledClasses.size();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(String key : cboMap.keySet()) {
+			sb.append(key).append("\t").append(cboMap.get(key)).append("\n");
+		}
+		return sb.toString();
 	}
 }

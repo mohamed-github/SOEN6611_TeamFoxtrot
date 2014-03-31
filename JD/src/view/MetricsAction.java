@@ -125,27 +125,27 @@ public class MetricsAction  implements IObjectActionDelegate {
 						// RFC Computation
 						System.out.print("\n RFC Metrics ............\n");
 						RFC rfc = new RFC(system);
-						//System.out.println(rfc.toString());
+						System.out.println(rfc.toString());
 						
 						// DIT Computation
 						System.out.print("\n DIT Metrics ............\n");
 						DIT dit = new DIT(system);
-						//System.out.println(dit.toString());
+						System.out.println(dit.toString());
 						
 						//NOC Computation
 						System.out.print("\n NOC Metrics ............ \n");
 						NOC noc = new NOC(system);
-						//System.out.println(noc.toString());
+						System.out.println(noc.toString());
 						
 						//WMC Computation
 						System.out.print("\n WMC Metrics ............\n");
 						WMC wmc = new WMC(system);
-						//System.out.println(wmc.toString());
+						System.out.println(wmc.toString());
 						
 						//CBO Computation
 						System.out.print("\n CBO Metrics ............\n");
 						CBO cbo = new CBO(system);
-						//System.out.println(cbo.toString());
+						System.out.println(cbo.toString());
 						
 						if(selectedPackageFragmentRoot != null) {
 							// package fragment root selected

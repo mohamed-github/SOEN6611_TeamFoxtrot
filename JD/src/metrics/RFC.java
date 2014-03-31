@@ -1,8 +1,10 @@
 package metrics;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import ast.ClassObject;
@@ -12,18 +14,21 @@ import ast.SystemObject;
 
 public class RFC {
 	
-	
+	private Map<String, Integer> rfcMap;
 	HashSet<String> M;
 	HashSet<String> R;
 	HashSet<String> RS;
 	int RFC;
 
 	public RFC(SystemObject system) {
+		rfcMap = new HashMap<String, Integer>();
+		
         Set<ClassObject> classes = system.getClassObjects();
         int rfcValue;
 		for(ClassObject classObject : classes) {
 			rfcValue = computeRFC(classObject, system);
-			System.out.println("RFC for Class " + classObject.getName() + " is " + rfcValue);
+			//System.out.println("RFC for Class " + classObject.getName() + " is " + rfcValue);
+			rfcMap.put(classObject.getName(), rfcValue);
 		}
 		
 	}
@@ -117,6 +122,15 @@ public class RFC {
 		HashSet<String> temp = new HashSet<String>(A);
 		temp.addAll(B);
 		return temp;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(String key : rfcMap.keySet()) {
+			sb.append(key).append("\t").append(rfcMap.get(key)).append("\n");
+		}
+		return sb.toString();
 	}
 	
 }

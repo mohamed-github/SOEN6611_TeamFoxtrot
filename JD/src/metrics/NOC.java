@@ -9,6 +9,8 @@
  */
 package metrics;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import ast.ClassObject;
@@ -18,7 +20,7 @@ import ast.inheritance.InheritanceTree;
 
 public class NOC 
 {
-	
+	private Map<String, Integer> nocMap;
 	/**
 	 * Constructor
 	 * @param system The system object
@@ -26,6 +28,7 @@ public class NOC
 
 	public NOC(SystemObject system) 
 	{
+		nocMap = new HashMap<String, Integer>();
 		//Pass ClassObjects to a set
 		Set<ClassObject> classes = system.getClassObjects();
         
@@ -34,7 +37,8 @@ public class NOC
 		{
 			//Number of Children value calculation from computeNOC
 			int nocValue = computeNOC(system, classObject);
-		    System.out.println("The NOC Value of the " + classObject.getName()  + " is : " + nocValue);
+		    //System.out.println("The NOC Value of the " + classObject.getName()  + " is : " + nocValue);
+		    nocMap.put(classObject.getName(), nocValue);
 		}
 		
 	}
@@ -73,6 +77,14 @@ public class NOC
 		
 			return childCount;
 	}
-
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(String key : nocMap.keySet()) {
+			sb.append(key).append("\t").append(nocMap.get(key)).append("\n");
+		}
+		return sb.toString();
+	}
 	
 }

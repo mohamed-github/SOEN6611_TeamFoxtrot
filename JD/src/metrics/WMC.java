@@ -1,7 +1,9 @@
 package metrics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import ast.ClassObject;
@@ -11,12 +13,17 @@ import ast.decomposition.CompositeStatementObject;
 
 public class WMC {
 
+	private Map<String, Integer> wmcMap;
+	
 	public WMC(SystemObject system) {
+		wmcMap = new HashMap<String, Integer>();
+		
         Set<ClassObject> classes = system.getClassObjects();
         int wmcValue;
 		for(ClassObject classObject : classes) {
 			wmcValue = computeWMC(classObject);
-			System.out.println("WMC for Class " + classObject.getName() + " is " + wmcValue);
+			//System.out.println("WMC for Class " + classObject.getName() + " is " + wmcValue);
+			wmcMap.put(classObject.getName(), wmcValue);
 		}	
 	}
 	
@@ -80,6 +87,16 @@ public class WMC {
 		
 		
 		return CC;
+	}
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(String key : wmcMap.keySet()) {
+			sb.append(key).append("\t").append(wmcMap.get(key)).append("\n");
+		}
+		return sb.toString();
 	}
 	
 }
