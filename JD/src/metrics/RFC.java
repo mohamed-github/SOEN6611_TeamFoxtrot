@@ -1,9 +1,9 @@
 package metrics;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import ast.ClassObject;
 import ast.MethodInvocationObject;
@@ -13,27 +13,28 @@ import ast.SystemObject;
 public class RFC {
 	
 	
-	TreeSet<String> M;
-	TreeSet<String> R;
-	TreeSet<String> RS;
+	HashSet<String> M;
+	HashSet<String> R;
+	HashSet<String> RS;
 	int RFC;
 
 	public RFC(SystemObject system) {
         Set<ClassObject> classes = system.getClassObjects();
         int rfcValue;
 		for(ClassObject classObject : classes) {
-			rfcValue = computeRFC(classObject);
+			rfcValue = computeRFC(classObject, system);
 			System.out.println("RFC for Class " + classObject.getName() + " is " + rfcValue);
 		}
 		
 	}
 	
-	private int computeRFC(ClassObject classObject) {
+	private int computeRFC(ClassObject classObject, SystemObject system) {
 		
-		M = new TreeSet<String>();
-		R = new TreeSet<String>();
-		RS = new TreeSet<String>();
+		M = new HashSet<String>();
+		R = new HashSet<String>();
+		RS = new HashSet<String>();
 		RFC = 0;
+		List<String> systemClasses = system.getClassNames();
 		
 		//System.out.println("\n The name of the class is : " + classObject.getName());
 		//System.out.println("The number of methods in this class: " + classObject.getNumberOfMethods());
@@ -44,7 +45,7 @@ public class RFC {
 		for(int i=0; i<methods.size(); i++)
 		{
 			//System.out.println("The methods in this class are : " + methods.get(i).getName() + "The class name is : " + methods.get(i).getClassName());
-			String methodsInCurrentClass = methods.get(i).getClassName() + "." + methods.get(i).getName();
+			String methodsInCurrentClass = methods.get(i).getClassName() + "." + methods.get(i).getSignature();
 			//System.out.println("Methods in Current Class :" + methodsInCurrentClass);
 			M.add(methodsInCurrentClass);
 			
@@ -54,9 +55,13 @@ public class RFC {
 			{
 				//System.out.println("The number of Method invocations from this method : " + methodInvocations.get(j).getMethodName() 
 					//	+ "The class this belongs to : " + methodInvocations.get(j).getOriginClassName());
-				String methodInvocationsInEachMethodOfClass = methodInvocations.get(j).getOriginClassName() + "." + methodInvocations.get(j).getMethodName();
+				String OriginClassName = methodInvocations.get(j).getOriginClassName();
+				String methodInvocationsInEachMethodOfClass = OriginClassName + "." + methodInvocations.get(j).getSignature();
 				//System.out.println("Methods Invocations in each method :" + methodInvocationsInEachMethodOfClass);
-				R.add(methodInvocationsInEachMethodOfClass);
+				if(systemClasses.contains(OriginClassName))
+				{
+					R.add(methodInvocationsInEachMethodOfClass);
+				}
 			}
 		}
 		
@@ -108,8 +113,8 @@ public class RFC {
 	}
 	
 	
-	private TreeSet<String> unionOfSet(Set<String> A, Set<String> B){
-		TreeSet<String> temp = new TreeSet<String>(A);
+	private HashSet<String> unionOfSet(Set<String> A, Set<String> B){
+		HashSet<String> temp = new HashSet<String>(A);
 		temp.addAll(B);
 		return temp;
 	}
