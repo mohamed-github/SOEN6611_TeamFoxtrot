@@ -212,7 +212,18 @@ public class CompositeStatementObject extends AbstractStatement {
 	public List<CompositeStatementObject> getSwitchStatements() {
 		List<CompositeStatementObject> switchStatements = new ArrayList<CompositeStatementObject>();
 		if(this.getType().equals(StatementType.SWITCH))
-			switchStatements.add(this);
+		{
+			for(AbstractStatement statement : statementList) {
+				if(statement.toString().contains("case"))
+				{
+					switchStatements.add(this);
+				}
+				if(statement.toString().contains("default"))
+				{
+					switchStatements.add(this);
+				}
+			}
+		}
 		for(AbstractStatement statement : statementList) {
 			if(statement instanceof CompositeStatementObject) {
 				CompositeStatementObject composite = (CompositeStatementObject)statement;
