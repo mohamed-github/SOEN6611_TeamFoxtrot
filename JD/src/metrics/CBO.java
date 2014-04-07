@@ -127,7 +127,7 @@ public class CBO {
 			// For Coupling through Parameters
 			for(int j=0; j<methodParameterTypeList.size();j++)
 			{
-				String classesCoupledThroughParameters = methodInvocations.get(j).getOriginClassName();
+				String classesCoupledThroughParameters = methodParameterTypeList.get(j).getClassType();
 				if(!classesCoupledThroughParameters.equalsIgnoreCase(classObject.getName()) && systemClasses.contains(classesCoupledThroughParameters))
 				{
 					coupledClasses.add(classesCoupledThroughParameters);
