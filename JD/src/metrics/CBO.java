@@ -8,7 +8,6 @@ import java.util.Set;
 
 import ast.ClassObject;
 import ast.FieldInstructionObject;
-import ast.FieldObject;
 import ast.MethodInvocationObject;
 import ast.MethodObject;
 import ast.SuperFieldInstructionObject;
@@ -18,26 +17,56 @@ import ast.TypeObject;
 
 public class CBO {
 	
-	private Map<String, Integer> cboMap;
+	private Map<String, Set<String>> cboMap;
+	private Map<String, Integer> cboValueMap;
 	
 	public CBO(SystemObject system) {
-		cboMap = new HashMap<String, Integer>();
+		cboMap = new HashMap<String, Set<String>>();
+		cboValueMap = new HashMap<String, Integer>();
+		
         Set<ClassObject> classes = system.getClassObjects();
-        int cboValue;
+        //int cboValue;
+        Set<String> coupledClassesSet = new HashSet<String>();
 		for(ClassObject classObject : classes) {
-			cboValue = computeCBO(classObject, system);
+			coupledClassesSet = computeCBO(classObject, system);
 			//System.out.println("CBO for Class " + classObject.getName() + " is " + cboValue);
-			cboMap.put(classObject.getName(), cboValue);
+			cboMap.put(classObject.getName(), coupledClassesSet);
+		}
+		
+	    computeImportCoupling(cboMap, classes);
+		
+	    for(Map.Entry<String,Set<String>> mapEntry: cboMap.entrySet())
+		{
+	    	cboValueMap.put(mapEntry.getKey(), mapEntry.getValue().size());
+		}
+	}
+	
+	private void computeImportCoupling(Map<String,Set<String>> cboMap, Set<ClassObject> classSet) {
+		
+		for(Map.Entry<String,Set<String>> mapEntry: cboMap.entrySet())
+		{
+			for(Map.Entry<String,Set<String>> mapEntry2: cboMap.entrySet())
+			{
+				if(!mapEntry2.getKey().equalsIgnoreCase(mapEntry.getKey()))
+				{
+					Set<String> valueSet = mapEntry2.getValue();
+					if(valueSet.contains(mapEntry.getKey()))
+					{
+						Set<String> cboMapValueSet = cboMap.get(mapEntry.getKey());
+						cboMapValueSet.add(mapEntry2.getKey());
+					}
+				}
+			}
 		}
 	}
 
-	private int computeCBO(ClassObject classObject, SystemObject system) {
+	private Set<String> computeCBO(ClassObject classObject, SystemObject system) {
 	
 		List<MethodObject> methods = classObject.getMethodList();
 		Set<String> coupledClasses = new HashSet<String>();
 		List<String> systemClasses = system.getClassNames();
 		
-		// For Method Level Access
+	
 		for(int i=0; i<methods.size(); i++)
 		{
 			
@@ -46,7 +75,11 @@ public class CBO {
 			List<SuperMethodInvocationObject> superClassMethodInvocations = methods.get(i).getSuperMethodInvocations();
 			List<SuperFieldInstructionObject> superClassFieldAccesses  = methods.get(i).getSuperFieldInstructions();
 			
+			String methodReturnTypes = methods.get(i).getReturnType().getClassType();
+			List<TypeObject> methodParameterTypeList = methods.get(i).getParameterTypeList();
 			
+			
+			// For Coupling through Methods
 			for(int j=0; j<methodInvocations.size();j++)
 			{
 				String classesCoupledThroughMethods = methodInvocations.get(j).getOriginClassName();
@@ -56,6 +89,7 @@ public class CBO {
 				}
 			}
 			
+			// For Coupling through Field Access
 			for(int j=0; j<fieldAccesses.size();j++)
 			{
 				String classesCoupledThroughFields = fieldAccesses.get(j).getOwnerClass();
@@ -65,6 +99,7 @@ public class CBO {
 				}
 			}
 			
+			// For Coupling through Super Class Method Calls
 			for(int j=0; j<superClassMethodInvocations.size();j++)
 			{
 				String classesCoupledThroughSuperClassMethodCalls = superClassMethodInvocations.get(j).getOriginClassName();
@@ -73,7 +108,7 @@ public class CBO {
 					coupledClasses.add(classesCoupledThroughSuperClassMethodCalls);
 				}
 			}
-			
+			// For Coupling through Super Class Field Accesses
 			for(int j=0; j<superClassFieldAccesses.size();j++)
 			{
 				String classesCoupledThroughSuperClassFieldAccesses = superClassFieldAccesses.get(j).getOwnerClass();
@@ -83,24 +118,23 @@ public class CBO {
 				}
 			}
 			
+			// For Coupling through Return Type
+			if(!methodReturnTypes.equalsIgnoreCase(classObject.getName()) && systemClasses.contains(methodReturnTypes))
+			{
+				coupledClasses.add(methodReturnTypes);
+			}
 			
-			/*
-			// for Coupling through Return Type
-			methods.get(i).getReturnType().getClass().getName();
-			
-			// For Coupling through Parameter Type
-			methods.get(i).getParameterTypeList().getClass().getName();	*/	
+			// For Coupling through Parameters
+			for(int j=0; j<methodParameterTypeList.size();j++)
+			{
+				String classesCoupledThroughParameters = methodInvocations.get(j).getOriginClassName();
+				if(!classesCoupledThroughParameters.equalsIgnoreCase(classObject.getName()) && systemClasses.contains(classesCoupledThroughParameters))
+				{
+					coupledClasses.add(classesCoupledThroughParameters);
+				}
+			}
+		
 		}
-		
-		// For Class Level Access
-		
-		/*List<FieldObject> fieldsAccessedInsideClass = classObject.getFieldList();
-		
-		//List<TypeObject> parameterTypes = methods.get(i).getParameterTypeList();
-		for(int i=0; i<fieldsAccessedInsideClass.size(); i++)
-		{
-			fieldsAccessedInsideClass.get(i).getClassName();
-		}*/
 		
 		/**
 		 * For Debugging
@@ -110,15 +144,14 @@ public class CBO {
 			}
 		*/
 		
-		//Size of the Coupled Classes Set is the CBO Value
-		return coupledClasses.size();
+		return coupledClasses;
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for(String key : cboMap.keySet()) {
-			sb.append(key).append("\t").append(cboMap.get(key)).append("\n");
+		for(String key : cboValueMap.keySet()) {
+			sb.append(key).append("\t").append(cboValueMap.get(key)).append("\n");
 		}
 		return sb.toString();
 	}

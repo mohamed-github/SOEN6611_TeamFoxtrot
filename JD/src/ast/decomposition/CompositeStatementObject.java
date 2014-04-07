@@ -221,45 +221,7 @@ public class CompositeStatementObject extends AbstractStatement {
 		}
 		return switchStatements;
 	}
-
-	public List<CompositeStatementObject> getSwitchCaseStatements() {
-		List<CompositeStatementObject> switchCaseStatements = new ArrayList<CompositeStatementObject>();
-		if(this.getType().equals(StatementType.CASE))
-			switchCaseStatements.add(this);
-		for(AbstractStatement statement : statementList) {
-			if(statement instanceof CompositeStatementObject) {
-				CompositeStatementObject composite = (CompositeStatementObject)statement;
-				switchCaseStatements.addAll(composite.getSwitchCaseStatements());
-			}
-		}
-		return switchCaseStatements;
-	}
 	
-	public List<CompositeStatementObject> getSwitchCase2Statements() {
-		List<CompositeStatementObject> switchCaseStatements = new ArrayList<CompositeStatementObject>();
-		if(this.getType().equals(StatementType.SWITCH_CASE))
-			switchCaseStatements.add(this);
-		for(AbstractStatement statement : statementList) {
-			if(statement instanceof CompositeStatementObject) {
-				CompositeStatementObject composite = (CompositeStatementObject)statement;
-				switchCaseStatements.addAll(composite.getSwitchCase2Statements());
-			}
-		}
-		return switchCaseStatements;
-	}
-	
-	public List<CompositeStatementObject> getDefaultStatements() {
-		List<CompositeStatementObject> defaultStatements = new ArrayList<CompositeStatementObject>();
-		if(this.getType().equals(StatementType.DEFAULT))
-			defaultStatements.add(this);
-		for(AbstractStatement statement : statementList) {
-			if(statement instanceof CompositeStatementObject) {
-				CompositeStatementObject composite = (CompositeStatementObject)statement;
-				defaultStatements.addAll(composite.getDefaultStatements());
-			}
-		}
-		return defaultStatements;
-	}
 	public List<TryStatementObject> getTryStatements() {
 		List<TryStatementObject> tryStatements = new ArrayList<TryStatementObject>();
 		if(this.getType().equals(StatementType.TRY))

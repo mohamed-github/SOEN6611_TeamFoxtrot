@@ -69,7 +69,7 @@ public class DIT
 			co = system.getClassObject(to.getClassType());
 			do
 			{		
-				if(co.getSuperclass() != null)
+				if(co != null && co.getSuperclass() != null)
 				{
 					ditCount++;
 				/**
@@ -90,7 +90,7 @@ public class DIT
 			    to = co.getSuperclass();
 				co = system.getClassObject(to.getClassType());
 			}
-			while(co.getSuperclass() != null);
+			while(co != null && co.getSuperclass() != null);
 			
 		}
 			else

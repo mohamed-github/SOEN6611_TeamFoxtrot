@@ -51,42 +51,40 @@ public class WMC {
 	private int computeCyclomaticComplexity(MethodObject methodObject) {
 		
 		int D, CC;
+		if(methodObject.getMethodBody() != null)
+		{
+			CompositeStatementObject compStmtObj = methodObject.getMethodBody().getCompositeStatement();
+			
+			List<CompositeStatementObject> totalControlStatementList = new ArrayList<CompositeStatementObject>();
 		
-		CompositeStatementObject compStmtObj = methodObject.getMethodBody().getCompositeStatement();
+			List<CompositeStatementObject> ifStmtList = compStmtObj.getIfStatements();
+			
+			totalControlStatementList.addAll(ifStmtList);
+			
+			List<CompositeStatementObject> forStmtList = compStmtObj.getForStatements();
+			
+			totalControlStatementList.addAll(forStmtList);
+			
+			List<CompositeStatementObject> whileStmtList = compStmtObj.getWhileStatements();
+			
+			totalControlStatementList.addAll(whileStmtList);
+			
+			List<CompositeStatementObject> doStmtList = compStmtObj.getDoStatements();
+			
+			totalControlStatementList.addAll(doStmtList);
+			
+			List<CompositeStatementObject> caseStmtList = compStmtObj.getSwitchStatements();
+			
+			totalControlStatementList.addAll(caseStmtList);
+			
+			D = totalControlStatementList.size();
+			
+		    CC = D + 1;
+		    
+		    return CC;
+		}
 		
-		List<CompositeStatementObject> totalControlStatementList = new ArrayList<CompositeStatementObject>();
-	
-		List<CompositeStatementObject> ifStmtList = compStmtObj.getIfStatements();
-		
-		totalControlStatementList.addAll(ifStmtList);
-		
-		List<CompositeStatementObject> forStmtList = compStmtObj.getForStatements();
-		
-		totalControlStatementList.addAll(forStmtList);
-		
-		List<CompositeStatementObject> whileStmtList = compStmtObj.getWhileStatements();
-		
-		totalControlStatementList.addAll(whileStmtList);
-		
-		List<CompositeStatementObject> doStmtList = compStmtObj.getDoStatements();
-		
-		totalControlStatementList.addAll(doStmtList);
-		
-		List<CompositeStatementObject> caseStmtList = compStmtObj.getSwitchCaseStatements();
-		
-		totalControlStatementList.addAll(caseStmtList);
-		
-		List<CompositeStatementObject> defaultStmtList = compStmtObj.getDefaultStatements();
-		
-		totalControlStatementList.addAll(defaultStmtList);
-		
-		D = totalControlStatementList.size();
-		
-	    CC = D + 1;
-		
-		
-		
-		return CC;
+		return 0;
 	}
 	
 	
