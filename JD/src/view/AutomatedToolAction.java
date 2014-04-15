@@ -1,13 +1,9 @@
 package view;
 
 import java.lang.reflect.InvocationTargetException;
-
-import metrics.CBO;
-import metrics.DIT;
-import metrics.LCOM;
-import metrics.NOC;
-import metrics.RFC;
-import metrics.WMC;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -16,6 +12,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -29,11 +26,13 @@ import org.eclipse.ui.progress.IProgressService;
 import util.WriteOutputToFile;
 
 import ast.ASTReader;
+import ast.ClassObject;
 import ast.CompilationUnitCache;
 import ast.SystemObject;
+import automatedtool.SearchForTestClasses;
 
-public class MetricsAction  implements IObjectActionDelegate {
-	
+public class AutomatedToolAction implements IObjectActionDelegate {
+
 	private IWorkbenchPart part;
 	private ISelection selection;
 	
@@ -62,6 +61,7 @@ public class MetricsAction  implements IObjectActionDelegate {
 					IPackageFragmentRoot packageFragmentRoot = (IPackageFragmentRoot)element;
 					selectedProject = packageFragmentRoot.getJavaProject();
 					selectedPackageFragmentRoot = packageFragmentRoot;
+					//System.out.println("The selected package fragment root is : " + selectedPackageFragmentRoot);
 					selectedPackageFragment = null;
 					selectedCompilationUnit = null;
 					selectedType = null;
@@ -71,6 +71,7 @@ public class MetricsAction  implements IObjectActionDelegate {
 					IPackageFragment packageFragment = (IPackageFragment)element;
 					selectedProject = packageFragment.getJavaProject();
 					selectedPackageFragment = packageFragment;
+					//System.out.println("The selected package fragment is : " + selectedPackageFragment);
 					selectedPackageFragmentRoot = null;
 					selectedCompilationUnit = null;
 					selectedType = null;
@@ -113,55 +114,57 @@ public class MetricsAction  implements IObjectActionDelegate {
 						else {
 							new ASTReader(selectedProject, monitor);
 						}
-						SystemObject system = ASTReader.getSystemObject();
 						
-						/**
-						 * Metric Calculation
-						 */
-						
-						//LCOM Computation
-						LCOM lcom = new LCOM(system);
-						
-						// RFC Computation
-						RFC rfc = new RFC(system);
-						
-						// DIT Computation
-						DIT dit = new DIT(system);
-						
-						//NOC Computation
-						NOC noc = new NOC(system);
-						
-						//WMC Computation
-						WMC wmc = new WMC(system);
-						
-						//CBO Computation
-						CBO cbo = new CBO(system);
-						
-						String outputDataToConsole = "\n\n Calculation of CK Metrics \n" + "\n LCOM Metrics ...........\n" + lcom.toString() + 
-											"\n RFC Metrics ............\n" + rfc.toString() + 
-											"\n DIT Metrics ............\n" + dit.toString() +
-											"\n NOC Metrics ............ \n" + noc.toString() +
-											"\n WMC Metrics ............\n" + wmc.toString() +
-											"\n CBO Metrics ............\n" + cbo.toString();
-						
-						// Write to Console
-						System.out.println(outputDataToConsole);
-						
-						String outputDataToFile = "Calculation of CK Metrics " + System.getProperty("line.separator") + System.getProperty("line.separator") +
-								"LCOM Metrics ..........." + System.getProperty("line.separator") + lcom.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator") +
-								"RFC Metrics ............" + System.getProperty("line.separator") + rfc.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator") +
-								"DIT Metrics ............" + System.getProperty("line.separator") + dit.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator") +
-								"NOC Metrics ............" + System.getProperty("line.separator") + noc.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator") +
-								"WMC Metrics ............" + System.getProperty("line.separator") + wmc.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator") +
-								"CBO Metrics ............" + System.getProperty("line.separator") + cbo.toString().replaceAll("\n", System.getProperty("line.separator")) + System.getProperty("line.separator");
-						
-						//Write to a file named "MetricsOutput.txt" on Desktop
-						WriteOutputToFile wof = new WriteOutputToFile();
-						wof.writeOutput(outputDataToFile, "MetricsOutput.txt");
-						
+						System.out.println("Automated Tool is invoked ... ");
+						//System.out.println("The selected Package Fragment is :" + selectedPackageFragmentRoot + " : " + selectedPackageFragment);
 						
 						if(selectedPackageFragmentRoot != null) {
 							// package fragment root selected
+							
+							try {
+								IPackageFragmentRoot[] packageArray = selectedProject.getPackageFragmentRoots();
+								List<String> srcClassesWithTest = new ArrayList<String>();
+								for(IPackageFragmentRoot s: packageArray)
+								{	
+									if(s.toString().contains("main"))
+									{
+										//System.out.println("Packages inside : " + s.toString());
+										SearchForTestClasses sftc = new SearchForTestClasses();
+										Set<ClassObject> classObjectsFromFolder = ASTReader.getSystemObject().getClassObjects(s);
+										srcClassesWithTest = sftc.appendTestToSourceClasses(classObjectsFromFolder);
+										/*for(String str: srcClassesWithTest)
+										{
+											System.out.println("Source Classes with Test " + str);
+										}*/
+									}
+								}	
+								for(IPackageFragmentRoot s: packageArray)
+								{
+									if(s.toString().contains("test") && srcClassesWithTest != null && !srcClassesWithTest.isEmpty())
+									{
+										//System.out.println("Packages inside : " + s.toString());
+										Set<ClassObject> classObjectsFromFolder = ASTReader.getSystemObject().getClassObjects(s);
+										SearchForTestClasses sftc = new SearchForTestClasses();
+										sftc.findAssertStatements(classObjectsFromFolder, srcClassesWithTest);
+										
+										// Output To Console
+										System.out.println("Assert Statements Output for Test Classes :\n");
+										System.out.println(sftc.toString());
+										
+										// Output to File
+										String outputDataToFile = "Assert Statements Output for Test Classes :" + System.getProperty("line.separator") +
+												System.getProperty("line.separator") + sftc.toString().replaceAll("\n", System.getProperty("line.separator"));
+										
+										WriteOutputToFile wof = new WriteOutputToFile();
+										wof.writeOutput(outputDataToFile, "AssertCount.txt");
+									}
+								}
+							} catch (JavaModelException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							//Set<ClassObject> classObjectsFromFolder = ASTReader.getSystemObject().getClassObjects();
+							//SearchForTestClasses sftc = new SearchForTestClasses(classObjectsFromFolder);
 						}
 						else if(selectedPackageFragment != null) {
 							// package fragment selected

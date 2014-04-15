@@ -6,10 +6,10 @@ import java.io.IOException;
 
 public class WriteOutputToFile {
 	
-	public void writeOutput(String outputData)
+	public void writeOutput(String outputData, String fileName)
 	{
 		String userDesktopLocation = System.getProperty("user.home") + "/Desktop";
-		File outputFile = new File(userDesktopLocation, "MetricsOutput.txt");
+		File outputFile = new File(userDesktopLocation, fileName);
 		FileWriter fr = null;
 		
 		try
