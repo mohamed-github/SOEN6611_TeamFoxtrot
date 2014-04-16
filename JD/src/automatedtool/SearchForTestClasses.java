@@ -7,7 +7,9 @@ import java.util.Set;
 import ast.ClassObject;
 import ast.MethodObject;
 import ast.decomposition.AbstractStatement;
+import ast.decomposition.CatchClauseObject;
 import ast.decomposition.CompositeStatementObject;
+import ast.decomposition.TryStatementObject;
 
 public class SearchForTestClasses {
 	
@@ -55,33 +57,41 @@ public class SearchForTestClasses {
 				String absoluteTestClassName = getAbsoluteClassName(classNameWithPackageName);
 				
 				
-				int assertCount = 0;
-				
 				if(srcClass.equals(absoluteTestClassName))
 				{
-					//System.out.println("Matched Test classes for Source Class : " + absoluteClassName);
+					//System.out.println("Matched Test classes for Source Class : " + absoluteTestClassName);
 					//outputForEachClass.add(srcClass);
 					outputForEachClass.add(absoluteTestPackageName);
 					outputForEachClass.add(absoluteTestClassName);
 					
 					
 					List<MethodObject> methodsList = classObject.getMethodList();
-					
+					List<CompositeStatementObject> totalAssertStatementListForEachClass = new ArrayList<CompositeStatementObject>();
 					for(int i=0; i < methodsList.size(); i++)
 					{
 						CompositeStatementObject compStmtObj = methodsList.get(i).getMethodBody().getCompositeStatement();
-						List<AbstractStatement> statementList = compStmtObj.getStatements();
+						List<CompositeStatementObject> assertStmtList = compStmtObj.getAssertStatements();
 						
-						for(AbstractStatement statement : statementList) {
-							if(statement.toString().contains("assert"))
+						List<TryStatementObject> tryStatementObjectList = methodsList.get(i).getMethodBody().getTryStatements();
+						for(int j=0; j< tryStatementObjectList.size(); j++)
+						{
+							assertStmtList.addAll(tryStatementObjectList.get(j).getAssertStatements());
+							List<CatchClauseObject> catchClauseObjectList = tryStatementObjectList.get(j).getCatchClauses();
+							for(int k=0;k < catchClauseObjectList.size(); k++)
 							{
-								//System.out.println("The assert statments : " + statement);
-								assertCount = assertCount + 1;
+								assertStmtList.addAll(catchClauseObjectList.get(k).getBody().getAssertStatements());
 							}
+							if(tryStatementObjectList.get(j).getFinallyClause() != null)
+							{
+								assertStmtList.addAll(tryStatementObjectList.get(j).getFinallyClause().getAssertStatements());
+							}
+							
 						}
+						totalAssertStatementListForEachClass.addAll(assertStmtList);
 					}
 				
-					outputForEachClass.add(Integer.toString(assertCount));
+					
+					outputForEachClass.add(Integer.toString(totalAssertStatementListForEachClass.size()));
 					assertClassesList.add(outputForEachClass);
 				}
 			}

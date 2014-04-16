@@ -233,6 +233,23 @@ public class CompositeStatementObject extends AbstractStatement {
 		return switchStatements;
 	}
 	
+	public List<CompositeStatementObject> getAssertStatements() {
+		List<CompositeStatementObject> assertStatements = new ArrayList<CompositeStatementObject>();
+		
+		for(AbstractStatement statement : statementList) {
+			if(statement.toString().contains("assert"))
+			{
+				assertStatements.add(this);
+			}
+			if(statement instanceof CompositeStatementObject) {
+				CompositeStatementObject composite = (CompositeStatementObject)statement;
+				assertStatements.addAll(composite.getAssertStatements());
+			}
+		}
+		return assertStatements;
+	}
+
+	
 	public List<TryStatementObject> getTryStatements() {
 		List<TryStatementObject> tryStatements = new ArrayList<TryStatementObject>();
 		if(this.getType().equals(StatementType.TRY))
